@@ -1,0 +1,45 @@
+---
+#########
+# NGINX #
+#########
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "demo-chart.fullname" . }}
+  labels:
+    app: {{ template "demo-chart.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.externalPort }}
+      targetPort: {{ .Values.service.internalPort }}
+      protocol: TCP
+      name: {{ .Values.service.name }}
+  selector:
+    app: {{ template "demo-chart.name" . }}
+    release: {{ .Release.Name }}
+---
+#########
+# HELLO #
+#########
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "demo-chart.fullname" . }}
+  labels:
+    app: {{ template "demo-chart.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: {{ .Values.service.name }}
+  selector:
+    app: {{ template "demo-chart.name" . }}
